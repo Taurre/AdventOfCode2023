@@ -1,6 +1,4 @@
-#include <assert.h>
 #include <err.h>
-#include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +19,6 @@ struct color {
 	int max;
 	int fewest;
 };
-
 
 struct color colors[] = {
 	{ .name = "red",   .max = RED_MAX,   .fewest = 0 },
