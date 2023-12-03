@@ -17,7 +17,12 @@ struct coord {
 	int y;
 };
 
-void
+static void schema_mark_adjacents(struct tile **, size_t, size_t);
+static long schema_compute_sum(struct tile **, size_t, size_t);
+static long gear_ratio(struct tile **, size_t, size_t, int, int);
+static long schema_compute_gear_ratio(struct tile **, size_t, size_t);
+
+static void
 schema_mark_adjacents(struct tile **schema, size_t lines, size_t columns) {
 	assert(schema != NULL);
 	assert(lines > 0);
@@ -53,7 +58,7 @@ schema_mark_adjacents(struct tile **schema, size_t lines, size_t columns) {
 	}
 }
 
-long
+static long
 schema_compute_sum(struct tile **schema, size_t lines, size_t columns) {
 	assert(schema != NULL);
 	assert(lines > 0);
@@ -80,6 +85,75 @@ schema_compute_sum(struct tile **schema, size_t lines, size_t columns) {
 	}
 
 	return sum;
+}
+
+static long
+gear_ratio(struct tile **schema, size_t lines, size_t columns, int x, int y) {
+	assert(schema != NULL);
+	assert(lines > 0);
+	assert(columns > 0);
+	assert(x >= 0 && x < (int)lines);
+	assert(y >= 0 && y < (int)columns);
+
+	struct coord moves[] = {
+		{ -1, -1 },
+		{ -1,  0 },
+		{ -1,  1 },
+		{  0, -1 },
+		{  0,  1 },
+		{  1, -1 },
+		{  1,  0 },
+		{  1,  1 },
+	};
+
+	int current = 0;
+	size_t parts = 0;
+	int pnumbers[2] = { 0 };
+
+	for (size_t move = 0; move < sizeof moves / sizeof *moves; move++) {
+		struct coord adj = { .x = x + moves[move].x, .y = y + moves[move].y };
+
+		if (adj.x < 0 || adj.x >= (int)lines || adj.y < 0 || adj.y >= (int)columns) {
+			continue;
+		}
+
+		if (isdigit(schema[adj.x][adj.y].symbol)) {
+			if (schema[adj.x][adj.y].value != current) {
+				current = schema[adj.x][adj.y].value;
+				
+				if (parts >= 2) {
+					return 0;
+				}
+
+				pnumbers[parts++] = current;
+			}
+		}
+		else {
+			current = 0;
+		}
+	}
+
+	return pnumbers[0] * pnumbers[1];
+}
+
+static long
+schema_compute_gear_ratio(struct tile **schema, size_t lines, size_t columns) {
+	assert(schema != NULL);
+	assert(lines > 0);
+	assert(columns > 0);
+
+	long ratio = 0;
+
+
+	for (size_t i = 0; i < lines; i++) {
+		for (size_t j = 0; j < columns; j++) {
+			if (schema[i][j].symbol == '*') {
+				ratio += gear_ratio(schema, lines, columns, (int)i, (int)j);
+			}
+		}
+	}
+
+	return ratio;
 }
 
 int
@@ -147,15 +221,7 @@ main(int argc, char **argv) {
 
 	schema_mark_adjacents(schema, lines, columns);
 	printf("Part 1: %ld\n", schema_compute_sum(schema, lines, columns));
-#if 0
-	for (size_t i = 0; i < lines; i++) {
-		for (size_t j = 0; j < columns; j++) {
-			printf("%c (%03d), ", schema[i][j].symbol, schema[i][j].value);
-		}
-
-		printf("\n");
-	}
-#endif
+	printf("Part 2: %ld\n", schema_compute_gear_ratio(schema, lines, columns));
 
 	if (ferror(input)) {
 		err(EXIT_FAILURE, "fgets");
