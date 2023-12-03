@@ -144,7 +144,6 @@ schema_compute_gear_ratio(struct tile **schema, size_t lines, size_t columns) {
 
 	long ratio = 0;
 
-
 	for (size_t i = 0; i < lines; i++) {
 		for (size_t j = 0; j < columns; j++) {
 			if (schema[i][j].symbol == '*') {
