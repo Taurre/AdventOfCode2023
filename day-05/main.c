@@ -135,10 +135,6 @@ main(int argc, char **argv) {
 		}
 	}
 
-	for (size_t i = 0; i < seeds->n_seeds; i++) {
-		printf("[%zu] = %ld\n", i, seeds->seeds[i]);
-	}
-
 	qsort(seeds->seeds, seeds->n_seeds, sizeof *seeds->seeds, &compare);
 	printf("Part 1: %ld\n", seeds->seeds[0]);
 
