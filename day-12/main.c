@@ -169,27 +169,5 @@ main(int argc, char **argv) {
 	}
 
 	printf("Part 1: %ld\n", sum);
-
-	for (size_t i = 0; i < n_rows; i++) {
-		struct row *row = &rows[i];
-		void *tmp = realloc(row->springs, (row->n_springs * 5) + 5);
-
-		if (tmp == NULL) {
-			err(EXIT_FAILURE, "realloc");
-		}
-
-		row->springs = tmp;
-
-		for (size_t i = 1; i < 5; i++) {
-			size_t offset = (row->n_springs * i) + i;
-			memmove(row->springs + offset, row->springs, row->n_springs);
-			row->springs[offset - 1] = '?';
-		}
-
-		row->n_springs = (row->n_springs * 5) + 5;
-		row->springs[row->n_springs - 1] = '\0';
-		printf("%s: %zu\n", row->springs, row->n_springs);
-	}
-
 	return 0;
 }
