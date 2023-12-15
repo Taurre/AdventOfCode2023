@@ -100,33 +100,4 @@ route:
 	}
 
 	fmt.Printf("Part 1: %d\n", len(loop) / 2)
-	count := 0
-
-	for coord, _ := range sketch {
-		enclosed := true
-
-		if visited[coord] {
-			continue
-		}
-
-		for _, move := range Moves {
-			next := Coord{X: coord.X+move.X, Y: coord.Y+move.Y}
-
-			if _, ok := sketch[next]; !ok {
-				enclosed = false
-				break;
-			}
-			if !visited[next] {
-				enclosed = false
-				break;
-			}
-		}
-
-		if enclosed {
-			visited[coord] = true
-			count++
-		}
-	}
-
-	fmt.Printf("Part 2: %d\n", count)
 }
